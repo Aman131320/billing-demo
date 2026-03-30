@@ -3,157 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Entity Groups | Professional AI Billing</title>
+    <title>Entity Groups | Pro AI Billing & ERP</title>
     <script type="importmap">
       { "imports": { "@google/generative-ai": "https://esm.run/@google/generative-ai" } }
     </script>
     <style>
-        :root { --bg: #FDFBF7; --sidebar: #1A1A1A; --accent: #C5A059; --text: #333; --white: #FFFFFF; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        :root { --bg: #FDFBF7; --sidebar: #1A1A1A; --accent: #C5A059; --text: #333; --white: #FFFFFF; --border: #E0DED7; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; }
         
-        /* Sidebar */
-        .sidebar { width: 260px; background: var(--sidebar); color: white; padding: 30px 20px; display: flex; flex-direction: column; }
-        .logo { font-family: 'Georgia', serif; font-size: 1.5rem; letter-spacing: 2px; border-bottom: 1px solid #444; padding-bottom: 20px; margin-bottom: 30px; text-align: center; }
-        .nav-item { padding: 12px; margin: 5px 0; cursor: pointer; border-radius: 5px; transition: 0.3s; color: #BBB; }
-        .nav-item:hover, .nav-item.active { background: #333; color: var(--accent); }
+        /* Login Page */
+        #loginPage { position: fixed; top:0; left:0; width: 100%; height: 100%; background: var(--sidebar); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .login-card { background: var(--white); padding: 40px; border-radius: 8px; width: 350px; text-align: center; border-top: 5px solid var(--accent); }
+        .login-card h1 { font-family: 'Georgia', serif; margin-bottom: 20px; letter-spacing: 2px; }
+        
+        /* Dashboard Layout */
+        #dashboard { display: none; height: 100vh; flex-direction: row; }
+        .sidebar { width: 240px; background: var(--sidebar); color: white; padding: 25px; display: flex; flex-direction: column; }
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; background: var(--bg); }
+        
+        /* Forms & Inputs */
+        .card { background: white; padding: 25px; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.03); margin-bottom: 25px; }
+        .grid-input { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        input { padding: 12px; border: 1px solid #DDD; border-radius: 4px; font-size: 0.9rem; }
+        
+        /* Table Style */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
+        th { background: #F4F2ED; text-align: left; padding: 12px; border-bottom: 2px solid var(--sidebar); }
+        td { padding: 12px; border-bottom: 1px solid #EEE; }
 
-        /* Main Content */
-        .main-content { flex: 1; padding: 40px; display: flex; gap: 30px; overflow-y: auto; }
+        /* Buttons */
+        .btn { padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-gold { background: var(--accent); color: white; }
+        .btn-dark { background: var(--sidebar); color: white; width: 100%; }
+        .btn-save { background: #2ecc71; color: white; margin-top: 10px; }
         
-        /* Left Side: Scanner */
-        .scanner-section { flex: 1.5; }
-        .card { background: white; padding: 25px; border-radius: 8px; border: 1px solid #E0DED7; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 20px; }
-        h2 { margin-top: 0; font-family: 'Georgia', serif; color: var(--sidebar); }
-        
-        input[type="text"], input[type="file"] { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #DDD; border-radius: 4px; box-sizing: border-box; }
-        .btn-prime { background: var(--sidebar); color: white; border: none; padding: 15px; width: 100%; cursor: pointer; font-weight: bold; border-radius: 4px; transition: 0.3s; }
-        .btn-prime:hover { background: var(--accent); color: black; }
-
-        /* Right Side: Live Cart */
-        .cart-section { flex: 1; background: white; border-left: 1px solid #E0DED7; padding: 25px; display: flex; flex-direction: column; height: fit-content; }
-        .cart-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .cart-table th { text-align: left; border-bottom: 2px solid var(--sidebar); padding: 10px; font-size: 0.9rem; }
-        .cart-table td { padding: 12px 10px; border-bottom: 1px solid #EEE; font-size: 0.95rem; }
-        
-        .total-box { margin-top: auto; padding-top: 20px; border-top: 2px solid var(--sidebar); }
-        .total-row { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: bold; margin-bottom: 20px; }
-        .btn-print { background: var(--accent); color: white; border: none; padding: 15px; width: 100%; cursor: pointer; font-weight: bold; border-radius: 4px; }
-
-        #loader { display: none; text-align: center; color: var(--accent); margin: 10px 0; font-weight: bold; }
+        .profit-text { color: #27ae60; font-weight: bold; font-size: 0.8rem; }
+        @media print { .sidebar, .scanner-box, .btn, #apiKey, .no-print { display: none !important; } .main-content { padding: 0; } }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="logo">ENTITY GROUPS</div>
-        <div class="nav-item active">Dashboard</div>
-        <div class="nav-item">Inventory</div>
-        <div class="nav-item">Sales History</div>
-        <div class="nav-item">Customers</div>
-        <div style="margin-top: auto; font-size: 0.8rem; color: #666; text-align: center;">v2.0 Official Demo</div>
+    <div id="loginPage">
+        <div class="login-card">
+            <h1>ENTITY GROUPS</h1>
+            <p>Authorized Access Only</p>
+            <input type="text" id="user" placeholder="Username" style="width: 90%; margin-bottom: 10px;"><br>
+            <input type="password" id="pass" placeholder="Password" style="width: 90%; margin-bottom: 20px;"><br>
+            <button class="btn btn-dark" onclick="login()">LOGIN TO SYSTEM</button>
+        </div>
     </div>
 
-    <div class="main-content">
-        
-        <div class="scanner-section">
-            <div class="card">
-                <h2>AI Smart Entry</h2>
-                <p style="color: #888; font-size: 0.9rem;">Snap a photo of the stock or a handwritten list to auto-fill the bill.</p>
-                <input type="text" id="apiKey" placeholder="Paste Gemini API Key Here...">
-                <input type="file" id="imageInput" accept="image/*">
-                <div id="loader">Processing through Entity AI...</div>
-                <button class="btn-prime" onclick="runAI()">SCAN & ADD TO BILL</button>
+    <div id="dashboard">
+        <div class="sidebar">
+            <h2 style="font-family: Georgia; letter-spacing: 1px;">ENTITY <span style="color:var(--accent)">PRO</span></h2>
+            <p style="font-size: 0.7rem; color: #777;">MANAGEMENT SUITE v3.0</p>
+            <div style="margin-top: 30px;">
+                <p>🏠 Dashboard</p>
+                <p>📦 Inventory</p>
+                <p>📈 Profit Shares</p>
+                <p>⚙️ Settings</p>
             </div>
-
-            <div class="card" id="historyCard" style="display:none;">
-                <h3>Last Scanned Item</h3>
-                <p id="aiLog" style="font-family: monospace; font-size: 0.8rem; background: #F9F9F9; padding: 10px; border-radius: 4px;"></p>
-            </div>
+            <input type="password" id="apiKey" placeholder="Gemini API Key" style="background: #333; color: white; border: none; margin-top: auto;">
         </div>
 
-        <div class="cart-section card">
-            <h2>Current Invoice</h2>
-            <table class="cart-table">
-                <thead>
-                    <tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr>
-                </thead>
-                <tbody id="cartItems">
-                    </tbody>
-            </table>
-
-            <div class="total-box">
-                <div class="total-row">
-                    <span>Grand Total:</span>
-                    <span id="grandTotal">₹0.00</span>
+        <div class="main-content">
+            <div class="card scanner-box">
+                <h2>AI Smart Bill Entry</h2>
+                <div class="grid-input">
+                    <input type="file" id="imageInput" accept="image/*">
+                    <input type="text" id="custMobile" placeholder="Customer Mobile No.">
+                    <button class="btn btn-gold" onclick="runAI()">SCAN WITH ENTITY AI</button>
                 </div>
-                <button class="btn-print" onclick="window.print()">FINISH & PRINT BILL</button>
+                <div id="loader" style="display:none; color: var(--accent);">Processing Billing Data...</div>
+            </div>
+
+            <div class="card">
+                <h2>Active Invoice</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Qty</th>
+                            <th>Base Price</th>
+                            <th>GST (18%)</th>
+                            <th>Net Total</th>
+                            <th class="no-print">Profit (Est)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="billBody">
+                        </tbody>
+                </table>
+
+                <div style="text-align: right; margin-top: 20px;">
+                    <h3>Grand Total: <span id="grandTotal">₹0.00</span></h3>
+                    <button class="btn btn-save no-print" onclick="saveFile()">SAVE AS CSV</button>
+                    <button class="btn btn-dark no-print" onclick="window.print()" style="width: auto;">PRINT OFFICIAL BILL</button>
+                </div>
             </div>
         </div>
-
     </div>
 
     <script type="module">
         import { GoogleGenerativeAI } from "@google/generative-ai";
 
+        // Simple Login Logic
+        window.login = function() {
+            const u = document.getElementById('user').value;
+            const p = document.getElementById('pass').value;
+            if(u === "admin" && p === "1234") {
+                document.getElementById('loginPage').style.display = "none";
+                document.getElementById('dashboard').style.display = "flex";
+            } else { alert("Wrong Credentials"); }
+        }
+
         window.runAI = async function() {
             const key = document.getElementById('apiKey').value;
             const fileInput = document.getElementById('imageInput');
-            const loader = document.getElementById('loader');
+            const mobile = document.getElementById('custMobile').value;
             
-            if(!key || fileInput.files.length === 0) {
-                alert("Please provide an API Key and select an image.");
-                return;
-            }
-
-            loader.style.display = "block";
+            if(!key || fileInput.files.length === 0) { alert("Need API Key and Image"); return; }
+            document.getElementById('loader').style.display = "block";
 
             try {
                 const genAI = new GoogleGenerativeAI(key);
                 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
                 const file = fileInput.files[0];
                 const imageData = await fileToGenerativePart(file);
 
-                const prompt = "Extract items, quantities, and prices from this. Return ONLY a JSON array: [{'item': 'Name', 'qty': 1, 'price': 100}]. Keep it simple.";
-                
+                const prompt = "Extract items, quantities, and unit prices. Return ONLY a JSON array like: [{'name': 'Milk', 'qty': 1, 'price': 50}].";
                 const result = await model.generateContent([prompt, imageData]);
                 const data = JSON.parse(result.response.text().replace(/```json|```/g, "").trim());
 
-                updateCart(data);
-                document.getElementById('aiLog').innerText = JSON.stringify(data);
-                document.getElementById('historyCard').style.display = "block";
-                
-            } catch (error) {
-                console.error(error);
-                alert("AI Processing Failed. Check API Key.");
-            } finally {
-                loader.style.display = "none";
-            }
+                renderBill(data, mobile);
+            } catch (e) { alert("AI Error"); }
+            document.getElementById('loader').style.display = "none";
         }
 
-        function updateCart(newItems) {
-            const cartBody = document.getElementById('cartItems');
-            let grandTotal = 0;
+        function renderBill(data, mobile) {
+            const tbody = document.getElementById('billBody');
+            let total = 0;
 
-            newItems.forEach(item => {
-                const rowTotal = item.qty * item.price;
+            data.forEach(item => {
+                const gst = item.price * 0.18;
+                const net = (item.price + gst) * item.qty;
+                const profit = (item.price * 0.20) * item.qty; // Assuming 20% margin
+                
                 const tr = `<tr>
-                    <td>${item.item}</td>
+                    <td>${item.name} <br><small>${mobile}</small></td>
                     <td>${item.qty}</td>
                     <td>₹${item.price}</td>
-                    <td>₹${rowTotal}</td>
+                    <td>₹${gst.toFixed(2)}</td>
+                    <td>₹${net.toFixed(2)}</td>
+                    <td class="no-print profit-text">₹${profit.toFixed(2)}</td>
                 </tr>`;
-                cartBody.innerHTML += tr;
+                tbody.innerHTML += tr;
+                total += net;
             });
+            document.getElementById('grandTotal').innerText = `₹${total.toFixed(2)}`;
+        }
 
-            // Calculate total from all rows
-            const rows = cartBody.querySelectorAll('tr');
-            rows.forEach(row => {
-                const rowPrice = parseFloat(row.cells[3].innerText.replace('₹', ''));
-                grandTotal += rowPrice;
+        window.saveFile = function() {
+            let csv = "Item,Qty,Price,GST,Total\n";
+            document.querySelectorAll("#billBody tr").forEach(tr => {
+                const cols = tr.querySelectorAll("td");
+                csv += `${cols[0].innerText},${cols[1].innerText},${cols[2].innerText},${cols[3].innerText},${cols[4].innerText}\n`;
             });
-
-            document.getElementById('grandTotal').innerText = `₹${grandTotal.toFixed(2)}`;
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'entity_bill.csv');
+            a.click();
         }
 
         async function fileToGenerativePart(file) {
