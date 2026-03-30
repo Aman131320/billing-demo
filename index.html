@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entity Groups | AI Billing Demo</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/generative-ai": "https://esm.run/@google/generative-ai"
+        }
+      }
+    </script>
+    <style>
+        :root { --bg: #F9F7F2; --accent: #1A1A1A; --text: #333; }
+        body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .container { max-width: 600px; width: 100%; background: white; padding: 40px; border: 1px solid #E0DED7; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        h1 { border-bottom: 2px solid var(--accent); padding-bottom: 10px; font-weight: normal; letter-spacing: 2px; text-transform: uppercase; font-size: 1.5rem; }
+        .input-group { margin-bottom: 20px; }
+        input[type="text"], input[type="file"] { width: 100%; padding: 12px; margin-top: 8px; border: 1px solid #CCC; box-sizing: border-box; }
+        button { background: var(--accent); color: white; border: none; padding: 15px 30px; cursor: pointer; width: 100%; font-size: 1rem; transition: 0.3s; }
+        button:hover { background: #444; }
+        #result { margin-top: 30px; border-top: 1px dashed #CCC; padding-top: 20px; display: none; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #EEE; }
+        .total { font-weight: bold; font-size: 1.2rem; text-align: right; margin-top: 20px; }
+        .loader { display: none; color: #777; font-style: italic; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Entity Groups</h1>
+        <p style="font-style: italic; color: #666;">AI-Powered Billing Solutions</p>
+        
+        <div class="input-group">
+            <label>Paste your Gemini API Key:</label>
+            <input type="text" id="apiKey" placeholder="AIzaSy...">
+        </div>
+
+        <div class="input-group">
+            <label>Upload Image of Items/Receipt:</label>
+            <input type="file" id="imageInput" accept="image/*">
+        </div>
+
+        <button onclick="runAI()">Generate Digital Bill</button>
+        <div id="loader" class="loader">AI is analyzing the items... Please wait.</div>
+
+        <div id="result">
+            <h3>Digital Invoice</h3>
+            <table id="billTable">
+                <thead><tr><th>Item</th><th>Qty</th><th>Price</th></tr></thead>
+                <tbody id="billBody"></tbody>
+            </table>
+            <div class="total" id="totalAmount">Total: ₹0</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { GoogleGenerativeAI } from "@google/generative-ai";
+
+        window.runAI = async function() {
+            const key = document.getElementById('apiKey').value;
+            const fileInput = document.getElementById('imageInput');
+            const loader = document.getElementById('loader');
+            const resultDiv = document.getElementById('result');
+            
+            if(!key || fileInput.files.length === 0) {
+                alert("Please provide an API Key and an Image.");
+                return;
+            }
+
+            loader.style.display = "block";
+            resultDiv.style.display = "none";
+
+            try {
+                const genAI = new GoogleGenerativeAI(key);
+                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+                const file = fileInput.files[0];
+                const imageData = await fileToGenerativePart(file);
+
+                const prompt = "Extract items, quantities, and prices from this image. Return ONLY a JSON array like: [{'item': 'Apples', 'qty': 2, 'price': 100}]. Do not include markdown code blocks.";
+                
+                const result = await model.generateContent([prompt, imageData]);
+                const text = result.response.text();
+                
+                // Clean and Parse JSON
+                const cleanJson = text.replace(/```json|```/g, "").trim();
+                const data = JSON.parse(cleanJson);
+
+                // Build Table
+                let total = 0;
+                const tbody = document.getElementById('billBody');
+                tbody.innerHTML = "";
+                
+                data.forEach(row => {
+                    const tr = `<tr><td>${row.item}</td><td>${row.qty}</td><td>₹${row.price}</td></tr>`;
+                    tbody.innerHTML += tr;
+                    total += (row.qty * row.price);
+                });
+
+                document.getElementById('totalAmount').innerText = `Total: ₹${total}`;
+                resultDiv.style.display = "block";
+            } catch (error) {
+                console.error(error);
+                alert("Error: Make sure your API key is valid.");
+            } finally {
+                loader.style.display = "none";
+            }
+        }
+
+        async function fileToGenerativePart(file) {
+            const base64EncodedDataPromise = new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result.split(',')[1]);
+                reader.readAsDataURL(file);
+            });
+            return {
+                inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
+            };
+        }
+    </script>
+</body>
+</html>
