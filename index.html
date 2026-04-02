@@ -3,101 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Entity Groups | Pro AI Billing & ERP</title>
+    <title>Entity Elite | Premium Billing</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script type="importmap">
       { "imports": { "@google/generative-ai": "https://esm.run/@google/generative-ai" } }
     </script>
     <style>
-        :root { --bg: #FDFBF7; --sidebar: #1A1A1A; --accent: #C5A059; --text: #333; --white: #FFFFFF; --border: #E0DED7; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; }
+        :root { --gold: #C5A059; --dark: #121212; --cream: #F9F7F2; --glass: rgba(255, 255, 255, 0.8); }
+        body { font-family: 'Inter', sans-serif; background-color: var(--cream); margin: 0; display: flex; height: 100vh; color: var(--dark); }
         
-        /* Login Page */
-        #loginPage { position: fixed; top:0; left:0; width: 100%; height: 100%; background: var(--sidebar); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .login-card { background: var(--white); padding: 40px; border-radius: 8px; width: 350px; text-align: center; border-top: 5px solid var(--accent); }
-        .login-card h1 { font-family: 'Georgia', serif; margin-bottom: 20px; letter-spacing: 2px; }
-        
-        /* Dashboard Layout */
-        #dashboard { display: none; height: 100vh; flex-direction: row; }
-        .sidebar { width: 240px; background: var(--sidebar); color: white; padding: 25px; display: flex; flex-direction: column; }
-        .main-content { flex: 1; padding: 30px; overflow-y: auto; background: var(--bg); }
-        
-        /* Forms & Inputs */
-        .card { background: white; padding: 25px; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.03); margin-bottom: 25px; }
-        .grid-input { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        input { padding: 12px; border: 1px solid #DDD; border-radius: 4px; font-size: 0.9rem; }
-        
-        /* Table Style */
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
-        th { background: #F4F2ED; text-align: left; padding: 12px; border-bottom: 2px solid var(--sidebar); }
-        td { padding: 12px; border-bottom: 1px solid #EEE; }
+        /* Sidebar - The Professional Look */
+        .sidebar { width: 280px; background: var(--dark); color: white; padding: 40px 20px; display: flex; flex-direction: column; transition: 0.3s; }
+        .logo { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--gold); margin-bottom: 50px; text-align: center; letter-spacing: 3px; border-bottom: 1px solid #333; padding-bottom: 20px; }
+        .nav-link { display: flex; align-items: center; gap: 15px; padding: 15px; cursor: pointer; border-radius: 8px; margin-bottom: 10px; transition: 0.3s; color: #888; }
+        .nav-link:hover, .active { background: #222; color: var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
-        /* Buttons */
-        .btn { padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn-gold { background: var(--accent); color: white; }
-        .btn-dark { background: var(--sidebar); color: white; width: 100%; }
-        .btn-save { background: #2ecc71; color: white; margin-top: 10px; }
+        /* Main Content Area */
+        .content { flex: 1; padding: 40px; overflow-y: auto; display: flex; gap: 30px; }
+        .panel { background: var(--glass); backdrop-filter: blur(10px); border-radius: 15px; border: 1px solid rgba(0,0,0,0.05); padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+
+        /* Animated Buttons & Inputs */
+        input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #DDD; border-radius: 8px; font-size: 1rem; transition: 0.3s; box-sizing: border-box;}
+        input:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 10px rgba(197, 160, 89, 0.2); }
         
-        .profit-text { color: #27ae60; font-weight: bold; font-size: 0.8rem; }
-        @media print { .sidebar, .scanner-box, .btn, #apiKey, .no-print { display: none !important; } .main-content { padding: 0; } }
+        .btn { padding: 15px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; display: inline-flex; align-items: center; gap: 10px; }
+        .btn:active { transform: scale(0.95); }
+        .btn-gold { background: var(--gold); color: white; width: 100%; justify-content: center; }
+        .btn-outline { background: transparent; border: 2px solid var(--dark); color: var(--dark); }
+        
+        /* Modern Table */
+        table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+        th { text-align: left; color: #888; text-transform: uppercase; font-size: 0.75rem; padding: 10px; }
+        td { background: white; padding: 15px; font-weight: 500; border-top: 1px solid #EEE; border-bottom: 1px solid #EEE; }
+        td:first-child { border-left: 1px solid #EEE; border-radius: 10px 0 0 10px; }
+        td:last-child { border-right: 1px solid #EEE; border-radius: 0 10px 10px 0; }
+
+        .profit-badge { background: #E8F5E9; color: #2E7D32; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; }
+        .total-card { background: var(--dark); color: white; padding: 30px; border-radius: 15px; margin-top: 20px; text-align: right; }
+
+        @media print { .sidebar, .no-print { display: none !important; } .content { padding: 0; } body { background: white; } }
     </style>
 </head>
 <body>
 
-    <div id="loginPage">
-        <div class="login-card">
-            <h1>ENTITY GROUPS</h1>
-            <p>Authorized Access Only</p>
-            <input type="text" id="user" placeholder="Username" style="width: 90%; margin-bottom: 10px;"><br>
-            <input type="password" id="pass" placeholder="Password" style="width: 90%; margin-bottom: 20px;"><br>
-            <button class="btn btn-dark" onclick="login()">LOGIN TO SYSTEM</button>
+    <div class="sidebar">
+        <div class="logo">ENTITY <span style="font-weight: 300;">PRO</span></div>
+        <div class="nav-link active" onclick="location.reload()"><i data-lucide="layout-dashboard"></i> POS Terminal</div>
+        <div class="nav-link"><i data-lucide="package"></i> Inventory</div>
+        <div class="nav-link"><i data-lucide="users"></i> Customers</div>
+        <div class="nav-link"><i data-lucide="bar-chart-3"></i> Reports</div>
+        
+        <div style="margin-top: auto; padding: 20px; background: #222; border-radius: 10px;">
+            <p style="font-size: 0.7rem; margin-bottom: 10px; color: var(--gold);">SECURE AI TOKEN</p>
+            <input type="password" id="apiKey" placeholder="Paste Gemini Key" style="background: #111; color: var(--gold); border: none; font-size: 0.8rem;">
         </div>
     </div>
 
-    <div id="dashboard">
-        <div class="sidebar">
-            <h2 style="font-family: Georgia; letter-spacing: 1px;">ENTITY <span style="color:var(--accent)">PRO</span></h2>
-            <p style="font-size: 0.7rem; color: #777;">MANAGEMENT SUITE v3.0</p>
-            <div style="margin-top: 30px;">
-                <p>🏠 Dashboard</p>
-                <p>📦 Inventory</p>
-                <p>📈 Profit Shares</p>
-                <p>⚙️ Settings</p>
+    <div class="content">
+        <div style="flex: 1;">
+            <div class="panel no-print">
+                <h2 style="font-family: 'Playfair Display'; margin-bottom: 25px;">Terminal Input</h2>
+                <div style="display:flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="btn btn-outline" style="flex:1" onclick="document.getElementById('manualForm').style.display='block'; document.getElementById('aiForm').style.display='none';"><i data-lucide="edit-3"></i> Manual</button>
+                    <button class="btn btn-outline" style="flex:1" onclick="document.getElementById('manualForm').style.display='none'; document.getElementById('aiForm').style.display='block';"><i data-lucide="scan"></i> AI Scan</button>
+                </div>
+
+                <div id="manualForm">
+                    <input type="text" id="itemName" placeholder="Item Name (e.g. Rolex Submariner)">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <input type="number" id="itemQty" placeholder="Quantity">
+                        <input type="number" id="itemPrice" placeholder="Unit Price">
+                    </div>
+                    <input type="text" id="custMobile" placeholder="Client Mobile Number">
+                    <button class="btn btn-gold" onclick="addManual()"><i data-lucide="plus-circle"></i> Add to Invoice</button>
+                </div>
+
+                <div id="aiForm" style="display:none; text-align: center;">
+                    <div style="border: 2px dashed #DDD; padding: 40px; border-radius: 10px; margin-bottom: 20px;">
+                        <input type="file" id="imageFile" accept="image/*">
+                        <p style="color: #888;">Upload Receipt or Item List</p>
+                    </div>
+                    <button class="btn btn-gold" onclick="runAI()"><i data-lucide="zap"></i> Start AI Analysis</button>
+                    <p id="loader" style="display:none; color: var(--gold); margin-top: 15px;">Processing through Entity AI...</p>
+                </div>
             </div>
-            <input type="password" id="apiKey" placeholder="Gemini API Key" style="background: #333; color: white; border: none; margin-top: auto;">
         </div>
 
-        <div class="main-content">
-            <div class="card scanner-box">
-                <h2>AI Smart Bill Entry</h2>
-                <div class="grid-input">
-                    <input type="file" id="imageInput" accept="image/*">
-                    <input type="text" id="custMobile" placeholder="Customer Mobile No.">
-                    <button class="btn btn-gold" onclick="runAI()">SCAN WITH ENTITY AI</button>
+        <div style="flex: 1.5;">
+            <div class="panel">
+                <div style="display:flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--dark); padding-bottom: 15px; margin-bottom: 20px;">
+                    <h2 style="font-family: 'Playfair Display'; letter-spacing: 2px;">INVOICE</h2>
+                    <span id="dateNow" style="color:#888;"></span>
                 </div>
-                <div id="loader" style="display:none; color: var(--accent);">Processing Billing Data...</div>
-            </div>
-
-            <div class="card">
-                <h2>Active Invoice</h2>
                 <table>
                     <thead>
-                        <tr>
-                            <th>Item Name</th>
-                            <th>Qty</th>
-                            <th>Base Price</th>
-                            <th>GST (18%)</th>
-                            <th>Net Total</th>
-                            <th class="no-print">Profit (Est)</th>
-                        </tr>
+                        <tr><th>Description</th><th>Qty</th><th>Price</th><th>GST (18%)</th><th>Total</th><th class="no-print">Profit</th></tr>
                     </thead>
-                    <tbody id="billBody">
-                        </tbody>
+                    <tbody id="billBody"></tbody>
                 </table>
 
-                <div style="text-align: right; margin-top: 20px;">
-                    <h3>Grand Total: <span id="grandTotal">₹0.00</span></h3>
-                    <button class="btn btn-save no-print" onclick="saveFile()">SAVE AS CSV</button>
-                    <button class="btn btn-dark no-print" onclick="window.print()" style="width: auto;">PRINT OFFICIAL BILL</button>
+                <div class="total-card">
+                    <p style="color: var(--gold); margin: 0; font-size: 0.9rem;">AMOUNT PAYABLE</p>
+                    <h1 id="grandTotal" style="font-size: 3rem; margin: 5px 0;">₹0.00</h1>
+                    <div class="no-print" style="display:flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                        <button class="btn btn-outline" style="color:white; border-color: white;" onclick="exportCSV()"><i data-lucide="download"></i> Excel</button>
+                        <button class="btn btn-gold" onclick="window.print()"><i data-lucide="printer"></i> Print Invoice</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -105,84 +116,75 @@
 
     <script type="module">
         import { GoogleGenerativeAI } from "@google/generative-ai";
+        lucide.createIcons();
+        document.getElementById('dateNow').innerText = new Date().toLocaleDateString();
 
-        // Simple Login Logic
-        window.login = function() {
-            const u = document.getElementById('user').value;
-            const p = document.getElementById('pass').value;
-            if(u === "admin" && p === "1234") {
-                document.getElementById('loginPage').style.display = "none";
-                document.getElementById('dashboard').style.display = "flex";
-            } else { alert("Wrong Credentials"); }
+        let totalAmount = 0;
+
+        window.addManual = function() {
+            const name = document.getElementById('itemName').value;
+            const qty = parseFloat(document.getElementById('itemQty').value);
+            const price = parseFloat(document.getElementById('itemPrice').value);
+            const mob = document.getElementById('custMobile').value || "Client";
+
+            if(!name || !qty || !price) return alert("All fields are required.");
+            addRow(name, qty, price, mob);
+            
+            // Visual Feedback: Clear form with animation
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemQty').value = '';
+            document.getElementById('itemPrice').value = '';
         }
 
         window.runAI = async function() {
             const key = document.getElementById('apiKey').value;
-            const fileInput = document.getElementById('imageInput');
-            const mobile = document.getElementById('custMobile').value;
-            
-            if(!key || fileInput.files.length === 0) { alert("Need API Key and Image"); return; }
-            document.getElementById('loader').style.display = "block";
+            const fileInput = document.getElementById('imageFile');
+            if(!key || !fileInput.files[0]) return alert("Missing Key or Image.");
 
+            document.getElementById('loader').style.display = "block";
             try {
                 const genAI = new GoogleGenerativeAI(key);
                 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-                const file = fileInput.files[0];
-                const imageData = await fileToGenerativePart(file);
-
-                const prompt = "Extract items, quantities, and unit prices. Return ONLY a JSON array like: [{'name': 'Milk', 'qty': 1, 'price': 50}].";
-                const result = await model.generateContent([prompt, imageData]);
+                const base64 = await new Promise(r => { const rd = new FileReader(); rd.onload = () => r(rd.result.split(',')[1]); rd.readAsDataURL(fileInput.files[0]); });
+                
+                const prompt = "Analyze this receipt. Return ONLY a JSON list: [{'name': 'item', 'qty': 1, 'price': 100}]";
+                const result = await model.generateContent([{ inlineData: { data: base64, mimeType: fileInput.files[0].type } }, prompt]);
                 const data = JSON.parse(result.response.text().replace(/```json|```/g, "").trim());
-
-                renderBill(data, mobile);
-            } catch (e) { alert("AI Error"); }
+                data.forEach(i => addRow(i.name, i.qty, i.price, "AI Sync"));
+            } catch (e) { alert("AI Scan Failed."); }
             document.getElementById('loader').style.display = "none";
         }
 
-        function renderBill(data, mobile) {
-            const tbody = document.getElementById('billBody');
-            let total = 0;
-
-            data.forEach(item => {
-                const gst = item.price * 0.18;
-                const net = (item.price + gst) * item.qty;
-                const profit = (item.price * 0.20) * item.qty; // Assuming 20% margin
-                
-                const tr = `<tr>
-                    <td>${item.name} <br><small>${mobile}</small></td>
-                    <td>${item.qty}</td>
-                    <td>₹${item.price}</td>
-                    <td>₹${gst.toFixed(2)}</td>
-                    <td>₹${net.toFixed(2)}</td>
-                    <td class="no-print profit-text">₹${profit.toFixed(2)}</td>
-                </tr>`;
-                tbody.innerHTML += tr;
-                total += net;
-            });
-            document.getElementById('grandTotal').innerText = `₹${total.toFixed(2)}`;
+        function addRow(name, qty, price, mobile) {
+            const gst = price * 0.18;
+            const net = (price + gst) * qty;
+            const profit = (price * 0.20) * qty;
+            
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${name}</strong><br><small style="color:#888">${mobile}</small></td>
+                <td>${qty}</td>
+                <td>₹${price.toLocaleString()}</td>
+                <td>₹${gst.toFixed(2)}</td>
+                <td>₹${net.toLocaleString()}</td>
+                <td class="no-print"><span class="profit-badge">+ ₹${profit.toFixed(0)}</span></td>
+            `;
+            document.getElementById('billBody').appendChild(tr);
+            totalAmount += net;
+            document.getElementById('grandTotal').innerText = `₹${totalAmount.toLocaleString()}`;
         }
 
-        window.saveFile = function() {
+        window.exportCSV = function() {
             let csv = "Item,Qty,Price,GST,Total\n";
             document.querySelectorAll("#billBody tr").forEach(tr => {
                 const cols = tr.querySelectorAll("td");
-                csv += `${cols[0].innerText},${cols[1].innerText},${cols[2].innerText},${cols[3].innerText},${cols[4].innerText}\n`;
+                csv += `${cols[0].innerText.split('\n')[0]},${cols[1].innerText},${cols[2].innerText},${cols[3].innerText},${cols[4].innerText}\n`;
             });
             const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.setAttribute('href', url);
-            a.setAttribute('download', 'entity_bill.csv');
+            a.href = URL.createObjectURL(blob);
+            a.download = `Entity_Bill_${Date.now()}.csv`;
             a.click();
-        }
-
-        async function fileToGenerativePart(file) {
-            const base64EncodedDataPromise = new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result.split(',')[1]);
-                reader.readAsDataURL(file);
-            });
-            return { inlineData: { data: await base64EncodedDataPromise, mimeType: file.type } };
         }
     </script>
 </body>
